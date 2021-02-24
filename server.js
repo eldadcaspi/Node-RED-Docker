@@ -9,7 +9,7 @@ var util = require("util");
 var express = require("express");
 var crypto = require("crypto");
 try { bcrypt = require('bcrypt'); }
-catch(e) { bcrypt = require('bcryptjs'); }
+catch (e) { bcrypt = require('bcryptjs'); }
 var nopt = require("nopt");
 var path = require("path");
 var fs = require("fs-extra");
@@ -24,7 +24,7 @@ var app = express();
 process.env.NODE_RED_HOME = __dirname;
 
 // Add a simple route for static content served from 'public'
-app.use("/",express.static("public"));
+app.use("/", express.static("public"));
 
 var healthcheck = new health.HealthChecker();
 app.use('/live', health.LivenessEndpoint(healthcheck));
@@ -37,8 +37,8 @@ var fs = require("fs");
 
 if (process.env.NODE_RED_TLS_CERT && process.env.NODE_RED_TLS_KEY) {
   settings.https = {
-    "key" : fs.readFileSync(process.env.NODE_RED_TLS_KEY),
-    "cert" : fs.readFileSync(process.env.NODE_RED_TLS_CERT)
+    "key": fs.readFileSync(process.env.NODE_RED_TLS_KEY),
+    "cert": fs.readFileSync(process.env.NODE_RED_TLS_CERT)
   };
   if (process.env.NODE_RED_TLS_CA) {
     settings.https.ca = fs.readFileSync(process.env.NODE_RED_TLS_CA);
@@ -52,18 +52,18 @@ if (process.env.NODE_RED_TLS_CERT && process.env.NODE_RED_TLS_KEY) {
 }
 
 if (settings.https) {
-  server = https.createServer(settings.https,function(req,res) {app(req,res);});
+  server = https.createServer(settings.https, function (req, res) { app(req, res); });
 } else {
-  server = http.createServer(function(req,res) {app(req,res);});
+  server = http.createServer(function (req, res) { app(req, res); });
 }
 server.setMaxListeners(0);
 
 function formatRoot(root) {
   if (root[0] != "/") {
-      root = "/" + root;
+    root = "/" + root;
   }
   if (root.slice(-1) != "/") {
-      root = root + "/";
+    root = root + "/";
   }
   return root;
 }
@@ -72,8 +72,8 @@ if (settings.httpRoot === false) {
   settings.httpAdminRoot = false;
   settings.httpNodeRoot = false;
 } else {
-  settings.httpRoot = settings.httpRoot||"/";
-  settings.disableEditor = settings.disableEditor||false;
+  settings.httpRoot = settings.httpRoot || "/";
+  settings.disableEditor = settings.disableEditor || false;
 }
 
 if (settings.httpAdminRoot !== false) {
@@ -88,21 +88,21 @@ if (settings.httpNodeRoot !== false) {
   settings.httpNodeAuth = settings.httpNodeAuth || settings.httpAuth;
 }
 
-if (settings.uiPort === undefined){
-    settings.uiPort = 1880;
+if (settings.uiPort === undefined) {
+  settings.uiPort = 1880;
 }
 
 
-settings.uiHost = settings.uiHost||"0.0.0.0";
+settings.uiHost = settings.uiHost || "0.0.0.0";
 
 // Initialise the runtime with a server and settings
-RED.init(server,settings);
+RED.init(server, settings);
 
 // Serve the editor UI from /red
-app.use(settings.httpAdminRoot,RED.httpAdmin);
+app.use(settings.httpAdminRoot, RED.httpAdmin);
 
 // Serve the http nodes UI from /api
-app.use(settings.httpNodeRoot,RED.httpNode);
+app.use(settings.httpNodeRoot, RED.httpNode);
 
 server.listen(settings.uiPort);
 
